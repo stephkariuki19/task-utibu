@@ -1,0 +1,56 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+// Looking for ways to speed up your queries, or scale easily with your serverless or edge functions?
+// Try Prisma Accelerate: https://pris.ly/cli/accelerate-init
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "mysql"
+  url      = env("DATABASE_URI")
+}
+
+
+model User {
+  patient_id      String @id @unique @default(uuid())
+  first_name      String
+  last_name       String
+  email           String @unique
+  hashed_password String
+
+  Order Order[]
+}
+
+model Order {
+  order_id         String        @id @unique @default(uuid())
+  patient_id       String
+  med_id           String
+  order_date       DateTime      @updatedAt
+  quantity         Int
+  payment_complete Boolean
+  // Define foreign key relationship
+  patient_key      User          @relation(fields: [patient_id], references: [patient_id])
+  med_key          MedicineStock @relation(fields: [med_id], references: [med_id])
+
+  Payment Payment[]
+}
+
+model Payment {
+  payment_id   String   @id @unique @default(uuid())
+  order_id     String
+  amount       Int
+  payment_date DateTime @updatedAt
+  // Define foreign key relationship
+  order_key    Order    @relation(fields: [order_id], references: [order_id])
+}
+
+model MedicineStock {
+  med_id     String  @id @unique @default(uuid())
+  unit_price Int
+  med_name   String
+  quantity   Int
+  Order      Order[]
+}
