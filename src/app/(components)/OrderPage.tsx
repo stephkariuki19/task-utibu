@@ -16,15 +16,33 @@ export default function OrderPage() {
   const [stock,setStock] = useState('')
 
 
+  
 
+async function fillDb() {
+  try {
+    // Create medicines
+    await prisma.medicineStock.createMany({
+      data: [
+        { unit_price: 100, med_name: 'ARV', quantity: 200 },
+        { unit_price: 200, med_name: 'Captopril', quantity: 200 },
+        { unit_price: 300, med_name: 'Glucophage', quantity: 200 }
+      ],
+    });
 
-
-
-
-  const fillDb = async()=>{
-
-
+    console.log('Medicines created successfully.');
+  } catch (error) {
+    console.error('Error creating medicines:', error);
+  } finally {
+    await prisma.$disconnect();
   }
+}
+
+
+
+
+
+
+
 
   const fetchStock = async()=>{
 
@@ -60,8 +78,9 @@ export default function OrderPage() {
           <h2 className="text-2xl font-bold text-brand-blue text-center mb-3">
             Make your order!
           </h2>
+          <button  onClick={fillDb} className="bg-brand-blue" > fill db </button>
 
-             <div className="stock">
+             <div className="stock bg-white p-4 rounded-md w-full">
                 <h4 className="text-black text-center">Medicines available</h4>
              </div>
           <form className="mt-4 space-y-6" onSubmit={makeOrder}>
