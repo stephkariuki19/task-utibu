@@ -1,14 +1,13 @@
 import React from 'react'
 import Navbar from '../(components)/Navbar'
-import SignupBody from '../(components)/SignupBody'
-
+import OrderPage from '../(components)/OrderPage'
 type Props = {}
 
 function page({}: Props) {
   return (
     <div> 
       <Navbar/>
-      <SignupBody/>
+      <OrderPage/>
     </div>
   )
 }

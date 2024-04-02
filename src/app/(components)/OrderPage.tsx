@@ -16,22 +16,7 @@ export default function OrderPage() {
   const [stock,setStock] = useState('')
 
 
-const fetchUsers = async () => {
-  try {
-    // Fetch all users
-    const users = await prisma.user.findMany();
 
-    // Log users to the console
-    console.log('Current Users:');
-    users.forEach((user: { patient_id: any; first_name: any; last_name: any; email: any; }) => {
-      console.log(`ID: ${user.patient_id}, Name: ${user.first_name} ${user.last_name}, Email: ${user.email}`);
-    });
-  } catch (error) {
-    console.error('Error fetching users:', error);
-  } finally {
-    await prisma.$disconnect();
-  }
-};
 
 
 
@@ -68,7 +53,6 @@ const fetchUsers = async () => {
 
   return (
     <>
-    <button onClick={fetchUsers}>SHOW USERS</button>
       <div
         className="flex justify-center items-center min-h-screen bg-light-grey"
       >
