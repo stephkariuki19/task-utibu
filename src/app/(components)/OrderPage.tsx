@@ -1,59 +1,53 @@
 "use client";
-import { useState } from "react";
+import { useState,useEffect } from "react";
 import axios from "axios";
 import { toast } from "react-hot-toast";
 import {prisma} from '@/app/lib/prisma'
 
 
 export default function OrderPage() {
+
+    useEffect(() => {
+        const fetchData = async () => {
+          const stockData = await fetchStock();
+          if (stockData) {
+            setStock(stockData);
+          }
+        };
+    
+        fetchData();
+      }, []); 
+
   const [orderdata, setorderdata] = useState({
-    first_name: "",
-    last_name: "",
+    drug_name: "",
+    drug_amount: "",
     email: "",
     password: "",
   });
 
-  const [stock,setStock] = useState('')
+  const [stock,setStock] = useState([])
 
+  const fetchStock = async () => {
+    try {
+      const response = await fetch('http://localhost:3000/api/stock'); // Replace with your actual endpoint
+      if (!response.ok) {
+        throw new Error('Failed to fetch stock data');
+      }
+      const stockData = await response.json();
+      console.log(stockData)
+      return stockData;
+    } catch (error) {
+      console.error('Error fetching stock data:', error);
+      return null;
+    }
+  };
 
-  
-
-async function fillDb() {
-  try {
-    // Create medicines
-    await prisma.medicineStock.createMany({
-      data: [
-        { unit_price: 100, med_name: 'ARV', quantity: 200 },
-        { unit_price: 200, med_name: 'Captopril', quantity: 200 },
-        { unit_price: 300, med_name: 'Glucophage', quantity: 200 }
-      ],
-    });
-
-    console.log('Medicines created successfully.');
-  } catch (error) {
-    console.error('Error creating medicines:', error);
-  } finally {
-    await prisma.$disconnect();
-  }
-}
-
-
-
-
-
-
-
-
-  const fetchStock = async()=>{
-
-
-  }
   const makeOrder = async (e: { preventDefault: () => void }) => {
     e.preventDefault();
     axios.post('/api/registerApi', orderdata)
         .then(() => {
             // Clear the orderdata state
-            setorderdata({first_name:'',last_name:'', email:'',password:''});
+            setorderdata({drug_name:'',drug_amount:'', email:'',password:''});
             // Log the success information to the console
             console.log('Registration successful! Proceed to login.');
             // Show a success toast message
@@ -78,28 +72,43 @@ async function fillDb() {
           <h2 className="text-2xl font-bold text-brand-blue text-center mb-3">
             Make your order!
           </h2>
-          <button  onClick={fillDb} className="bg-brand-blue" > fill db </button>
 
              <div className="stock bg-white p-4 rounded-md w-full">
-                <h4 className="text-black text-center">Medicines available</h4>
+                <h4 className="font-semibold text-black text-center">Medicines Available</h4>
+             <table className="table-auto">
+        <thead>
+          <tr>
+            <th className="px-4 py-2">Medicine Name</th>
+            <th className="px-4 py-2">Quantity</th>
+          </tr>
+        </thead>
+        <tbody>
+          {stock.map(item => (
+            <tr key={item.med_id}>
+              <td className="border px-4 py-2">{item.med_name}</td>
+              <td className="border px-4 py-2">{item.quantity}</td>
+            </tr>
+          ))}
+        </tbody>
+      </table>
              </div>
-          <form className="mt-4 space-y-6" onSubmit={makeOrder}>
+          <form className="mt-4 space-y-6 bg-brand-blue relative right-1" onSubmit={makeOrder}>
             <div className=" p-2">
               <label
-                htmlFor="first_name"
+                htmlFor="drug_name"
                 className="block text-sm font-medium leading-6 text-white"
               >
-                First Name
+                Drug Name
               </label>
 
               <div className="mt-1">
                 <input
-                  placeholder=" e.g. John"
-                  id="first_name"
-                  name="first_name"
+                  placeholder=" e.g. Glucophage"
+                  id="drug_name"
+                  name="drug_name"
                   type="text"
-                  value={orderdata.first_name}
-                  onChange={(e) => setorderdata({ ...orderdata, first_name: e.target.value })}
+                  value={orderdata.drug_name}
+                  onChange={(e) => setorderdata({ ...orderdata, drug_name: e.target.value })}
                   required
                   className="h-6 block w-full rounded-sm border-gray-300 shadow-sm placeholder-gray-400 sm:text-sm focus:border-brand-blue focus:outline-none focus:ring-1 focus:ring-brand-blue"
                 />
@@ -111,17 +120,17 @@ async function fillDb() {
                 htmlFor="text"
                 className="block text-sm font-medium leading-6 text-white"
               >
-                Last Name
+                Amount of drug units
               </label>
 
               <div className="mt-1">
                 <input
-                  placeholder=" e.g. Doe"
-                  id="last_name"
-                  name="last_name"
-                  type="last_name"
-                  value={orderdata.last_name}
-                  onChange={(e) => setorderdata({ ...orderdata, last_name: e.target.value })}
+                  placeholder=" e.g. 3"
+                  id="drug_amount"
+                  name="drug_amount"
+                  type="drug_amount"
+                  value={orderdata.drug_amount}
+                  onChange={(e) => setorderdata({ ...orderdata, drug_amount: e.target.value })}
                   required
                   className="h-6 block w-full rounded-sm border-gray-300 shadow-sm placeholder-gray-400 sm:text-sm focus:border-brand-blue focus:outline-none focus:ring-1 focus:ring-brand-blue"
                 />
@@ -151,36 +160,14 @@ async function fillDb() {
               </div>
             </div>
 
-            <div className="p-2">
-              <label
-                htmlFor="password"
-                className="block text-sm font-medium leading-6 text-white"
-              >
-                Password
-              </label>
-
-              <div className="mt-1">
-                <input
-                  id="password"
-                  name="password"
-                  type="password"
-                  autoComplete="current-password"
-                  required
-                  value={orderdata.password}
-                  onChange={(e) =>
-                    setorderdata({ ...orderdata, password: e.target.value })
-                  }
-                  className="h-6 block w-full rounded-sm border-gray-300 shadow-sm placeholder-gray-400 sm:text-sm focus:border-brand-blue focus:outline-none focus:ring-1 focus:ring-brand-blue"
-                />
-              </div>
-            </div>
+      
 
             <div>
               <button
                 type="submit"
-                className=" transition-transform transform-gpu hover:translate-y-1  w-full flex justify-center py-2 px-4 border border-transparent rounded-md shadow-sm text-sm font-semibold text-white bg-brand-blue"
+                className=" transition-transform transform-gpu hover:translate-y-1  w-full flex justify-center py-2 px-4 border border-transparent relative bottom-4 rounded-md shadow-sm text-sm font-semibold text-white bg-gray-900"
               >
-                Sign Up
+                Make Order
               </button>
             </div>
           </form>
