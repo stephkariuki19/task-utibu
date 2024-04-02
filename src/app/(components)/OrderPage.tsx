@@ -19,10 +19,10 @@ export default function OrderPage() {
       }, []); 
 
   const [orderdata, setorderdata] = useState({
-    drug_name: "",
-    drug_amount: "",
+    med_id: 0,
+    quantity: 0,
     email: "",
-    password: "",
+    drug_name:""
   });
 
   const [stock,setStock] = useState([])
@@ -44,14 +44,13 @@ export default function OrderPage() {
 
   const makeOrder = async (e: { preventDefault: () => void }) => {
     e.preventDefault();
-    axios.post('/api/registerApi', orderdata)
+    axios.post('/api/makeOrder', orderdata)
         .then(() => {
             // Clear the orderdata state
-            setorderdata({drug_name:'',drug_amount:'', email:'',password:''});
+            setorderdata({drug_name:'',quantity:0, email:'',med_id:0});
             // Log the success information to the console
-            console.log('Registration successful! Proceed to login.');
             // Show a success toast message
-            toast.success('Registration is successful! Proceed to login🎉');
+            toast.success('Order Successful🎉');
         })
         .catch(() => {
             // Show an error toast message
@@ -78,6 +77,7 @@ export default function OrderPage() {
              <table className="table-auto">
         <thead>
           <tr>
+          <th className="px-4 py-2">Medicine ID</th>
             <th className="px-4 py-2">Medicine Name</th>
             <th className="px-4 py-2">Quantity</th>
           </tr>
@@ -85,6 +85,7 @@ export default function OrderPage() {
         <tbody>
           {stock.map(item => (
             <tr key={item.med_id}>
+              <td className="border px-4 py-2">{item.med_id}</td>
               <td className="border px-4 py-2">{item.med_name}</td>
               <td className="border px-4 py-2">{item.quantity}</td>
             </tr>
@@ -120,17 +121,39 @@ export default function OrderPage() {
                 htmlFor="text"
                 className="block text-sm font-medium leading-6 text-white"
               >
+                Drug ID
+              </label>
+
+              <div className="mt-1">
+                <input
+                  placeholder=" e.g. 1"
+                  id="med_id"
+                  name="med_id"
+                  type="number"
+                  value={orderdata.med_id}
+                  onChange={(e) => setorderdata({ ...orderdata, med_id: parseInt(e.target.value, 10) })}
+                  required
+                  className="h-6 block w-full rounded-sm border-gray-300 shadow-sm placeholder-gray-400 sm:text-sm focus:border-brand-blue focus:outline-none focus:ring-1 focus:ring-brand-blue"
+                />
+              </div>
+            </div>
+
+            <div className=" p-2">
+              <label
+                htmlFor="text"
+                className="block text-sm font-medium leading-6 text-white"
+              >
                 Amount of drug units
               </label>
 
               <div className="mt-1">
                 <input
                   placeholder=" e.g. 3"
-                  id="drug_amount"
-                  name="drug_amount"
-                  type="drug_amount"
-                  value={orderdata.drug_amount}
-                  onChange={(e) => setorderdata({ ...orderdata, drug_amount: e.target.value })}
+                  id="quantity"
+                  name="number"
+                  type="quantity"
+                  value={orderdata.quantity}
+                  onChange={(e) => setorderdata({ ...orderdata, quantity: parseInt(e.target.value, 10) })}
                   required
                   className="h-6 block w-full rounded-sm border-gray-300 shadow-sm placeholder-gray-400 sm:text-sm focus:border-brand-blue focus:outline-none focus:ring-1 focus:ring-brand-blue"
                 />

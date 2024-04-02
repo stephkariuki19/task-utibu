@@ -13,7 +13,6 @@ datasource db {
   url      = env("DATABASE_URI")
 }
 
-
 model User {
   patient_id      String @id @unique @default(uuid())
   first_name      String
@@ -25,15 +24,14 @@ model User {
 }
 
 model Order {
-  order_id         String        @id @unique @default(uuid())
-  patient_id       String
-  med_id           String
-  order_date       DateTime      @updatedAt
-  quantity         Int
-  payment_complete Boolean
+  order_id    String        @id @unique @default(uuid())
+  email       String
+  med_id      Int
+  order_date  DateTime      @updatedAt
+  quantity    Int
   // Define foreign key relationship
-  patient_key      User          @relation(fields: [patient_id], references: [patient_id])
-  med_key          MedicineStock @relation(fields: [med_id], references: [med_id])
+  patient_key User          @relation(fields: [email], references: [email])
+  med_key     MedicineStock @relation(fields: [med_id], references: [med_id])
 
   Payment Payment[]
 }
@@ -48,7 +46,7 @@ model Payment {
 }
 
 model MedicineStock {
-  med_id     String  @id @unique @default(uuid())
+  med_id     Int     @id @default(autoincrement())
   unit_price Int
   med_name   String
   quantity   Int
