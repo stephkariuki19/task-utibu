@@ -1,5 +1,10 @@
 This is a [Next.js](https://nextjs.org/) project bootstrapped with [`create-next-app`](https://github.com/vercel/next.js/tree/canary/packages/create-next-app).
 
+## Background 📲
+Thanks for taking the time to view my solution ! 😊 I utilised NextJS framework to build my front end and backend,Prisma ORM to interact with the database (mysql server) and Tailwind CSS fot styling.
+The application is fully responsive and there are some screenshots of the app in the public folder
+The pictures for review are mainly : order-api,order-page,sign-up-page,landing-page,login-page,sucessful-order and utibu-db-schema
+
 ## Getting Started
 
 First, run the development server:
